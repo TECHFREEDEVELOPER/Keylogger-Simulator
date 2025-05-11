@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Keylogger Simulator | Cybersecurity Education Tool</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .typing-animation {
+            animation: blink 1s step-end infinite;
+        }
+        @keyframes blink {
+            from, to { opacity: 1; }
+            50% { opacity: 0; }
+        }
+        .fade-in {
+            animation: fadeIn 0.5s ease-in;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        .status-indicator {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 5px;
+        }
+        .online {
+            background-color: #10B981;
+            box-shadow: 0 0 5px #10B981;
+        }
+        .offline {
+            background-color: #EF4444;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 font-sans">
+    <!-- Disclaimer Banner -->
+    <div class="bg-red-600 text-white p-3 text-center">
+        <strong>EDUCATIONAL USE ONLY:</strong> This is a simulated keylogger for cybersecurity awareness. It does NOT capture real keystrokes or system data.
+    </div>
+
+    <!-- Main Container -->
+    <div class="container mx-auto p-4 max-w-6xl">
+        <!-- Header -->
+        <header class="bg-white rounded-lg shadow-md p-6 mb-6">
+            <div class="flex justify-between items-center">
+                <div>
+                    <h1 class="text-3xl font-bold text-gray-800">
+                        <i class="fas fa-keyboard mr-3 text-blue-500"></i>
+                        Keylogger Simulator
+                    </h1>
+                    <p class="text-gray-600">Cybersecurity Awareness & Research Tool</p>
+                </div>
+                <div class="flex items-center">
+                    <span id="status-indicator" class="status-indicator online"></span>
+                    <span id="status-text" class="text-gray-700 font-medium">Online</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Installation Panel (Initially hidden) -->
+        <div id="installation-panel" class="bg-white rounded-lg shadow-md p-6 mb-6 hidden">
+            <h2 class="text-2xl font-semibold mb-4 text-gray-800">
+                <i class="fas fa-download mr-2 text-blue-500"></i>
+                Installation Setup
+            </h2>
+            
+            <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-6">
+                <div class="flex">
+                    <div class="flex-shrink-0">
+                        <i class="fas fa-exclamation-triangle text-yellow-400"></i>
+                    </div>
+                    <div class="ml-3">
+                        <p class="text-sm text-yellow-700">
+                            <strong>Disclaimer:</strong> This is a simulated installation for educational purposes only. No actual system modifications will be made.
+                        </p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-gray-700 font-medium mb-2">Installation Directory</label>
+                    <div class="flex">
+                        <input type="text" class="flex-grow p-2 border border-gray-300 rounded-l" value="C:\Program Files\KeyloggerSimulator" readonly>
+                        <button class="bg-gray-200 px-4 rounded-r border border-l-0 border-gray-300 hover:bg-gray-300">
+                            <i class="fas fa-folder-open"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="flex items-center">
+                            <input type="checkbox" class="form-checkbox h-5 w-5 text-blue-600" checked>
+                            <span class="ml-2 text-gray-700">Create desktop shortcut</span>
+                        </label>
+                    </div>
+                    <div>
+                        <label class="flex items-center">
+                            <input type="checkbox" class="form-checkbox h-5 w-5 text-blue-600" checked>
+                            <span class="ml-2 text-gray-700">Add to system startup</span>
+                        </label>
+                    </div>
+                </div>
+                
+                <div class="pt-4">
+                    <button id="install-btn" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded transition duration-300">
+                        <i class="fas fa-spinner fa-spin hidden mr-2"></i>
+                        Install Simulator
+                    </button>
+                    <button id="cancel-install-btn" class="ml-4 bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-6 rounded transition duration-300">
+                        Cancel
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Dashboard -->
+        <div id="dashboard" class="fade-in">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+                <!-- Keystroke Visualization -->
+                <div class="bg-white rounded-lg shadow-md p-6 col-span-2">
+                    <h2 class="text-xl font-semibold mb-4 text-gray-800">
+                        <i class="fas fa-keyboard mr-2 text-blue-500"></i>
+                        Keystroke Visualization
+                    </h2>
+                    <div class="bg-gray-50 p-4 rounded border border-gray-200 h-64 overflow-y-auto font-mono" id="keystroke-display">
+                        <div class="text-gray-500">Press keys in the input below to simulate keylogging...</div>
+                    </div>
+                    <div class="mt-4">
+                        <input type="text" id="simulated-input" class="w-full p-3 border border-gray-300 rounded" 
+                               placeholder="Type here to simulate keylogging (educational purposes only)">
+                    </div>
+                </div>
+                
+                <!-- System Info -->
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <h2 class="text-xl font-semibold mb-4 text-gray-800">
+                        <i class="fas fa-info-circle mr-2 text-blue-500"></i>
+                        System Information
+                    </h2>
+                    <div class="space-y-4">
+                        <div>
+                            <div class="text-gray-500 text-sm">Simulation Status</div>
+                            <div class="flex items-center">
+                                <span id="sim-status-indicator" class="status-indicator online"></span>
+                                <span id="sim-status-text" class="font-medium">Active</span>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="text-gray-500 text-sm">Total Runtime</div>
+                            <div class="font-medium" id="runtime-display">00:00:05</div>
+                        </div>
+                        <div>
+                            <div class="text-gray-500 text-sm">Simulated Keys Logged</div>
+                            <div class="font-medium" id="key-count">0</div>
+                        </div>
+                        <div>
+                            <div class="text-gray-500 text-sm">Last Activity</div>
+                            <div class="font-medium" id="last-activity">Just now</div>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-6 pt-4 border-t border-gray-200">
+                        <button id="toggle-sim-btn" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded transition duration-300 w-full">
+                            <i class="fas fa-power-off mr-2"></i>
+                            Pause Simulation
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Log Table -->
+            <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-xl font-semibold text-gray-800">
+                        <i class="fas fa-list-alt mr-2 text-blue-500"></i>
+                        Simulated Key Logs
+                    </h2>
+                    <div>
+                        <button id="clear-logs-btn" class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium py-1 px-3 rounded text-sm transition duration-300">
+                            <i class="fas fa-trash-alt mr-1"></i>
+                            Clear Logs
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Timestamp</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Key</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Event</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Duration (ms)</th>
+                            </tr>
+                        </thead>
+                        <tbody id="log-table-body" class="bg-white divide-y divide-gray-200">
+                            <!-- Logs will be inserted here by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <!-- Educational Info -->
+            <div class="bg-blue-50 rounded-lg shadow-md p-6 border border-blue-100">
+                <h2 class="text-xl font-semibold mb-3 text-blue-800">
+                    <i class="fas fa-graduation-cap mr-2 text-blue-500"></i>
+                    Cybersecurity Awareness
+                </h2>
+                <div class="prose max-w-none text-blue-900">
+                    <p>This simulator demonstrates how keyloggers work to help you understand their potential risks:</p>
+                    <ul class="list-disc pl-5 mt-2 space-y-1">
+                        <li>Keyloggers can record every keystroke, including passwords and sensitive information</li>
+                        <li>They often run silently in the background without user knowledge</li>
+                        <li>Malicious keyloggers can be installed through phishing or malware</li>
+                    </ul>
+                    <p class="mt-3 font-medium">Protection Tips:</p>
+                    <ul class="list-disc pl-5 mt-1 space-y-1">
+                        <li>Use reputable antivirus/anti-malware software</li>
+                        <li>Be cautious with downloads and email attachments</li>
+                        <li>Consider using a virtual keyboard for sensitive inputs</li>
+                        <li>Keep your system and software updated</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Simulated data
+        let isSimulating = true;
+        let keyCount = 0;
+        let runtimeSeconds = 5;
+        let logs = [];
+        
+        // DOM elements
+        const keystrokeDisplay = document.getElementById('keystroke-display');
+        const simulatedInput = document.getElementById('simulated-input');
+        const logTableBody = document.getElementById('log-table-body');
+        const keyCountDisplay = document.getElementById('key-count');
+        const runtimeDisplay = document.getElementById('runtime-display');
+        const lastActivityDisplay = document.getElementById('last-activity');
+        const toggleSimBtn = document.getElementById('toggle-sim-btn');
+        const clearLogsBtn = document.getElementById('clear-logs-btn');
+        const statusIndicator = document.getElementById('status-indicator');
+        const statusText = document.getElementById('status-text');
+        const simStatusIndicator = document.getElementById('sim-status-indicator');
+        const simStatusText = document.getElementById('sim-status-text');
+        const installationPanel = document.getElementById('installation-panel');
+        const dashboard = document.getElementById('dashboard');
+        const installBtn = document.getElementById('install-btn');
+        const cancelInstallBtn = document.getElementById('cancel-install-btn');
+        
+        // Initialize with some sample logs
+        addSampleLogs();
+        
+        // Update runtime every second
+        setInterval(updateRuntime, 1000);
+        
+        // Simulate random key events occasionally
+        setInterval(simulateRandomKey, 3000);
+        
+        // Event listeners
+        simulatedInput.addEventListener('keydown', handleKeyDown);
+        simulatedInput.addEventListener('keyup', handleKeyUp);
+        toggleSimBtn.addEventListener('click', toggleSimulation);
+        clearLogsBtn.addEventListener('click', clearLogs);
+        installBtn.addEventListener('click', completeInstallation);
+        cancelInstallBtn.addEventListener('click', cancelInstallation);
+        
+        // Show installation panel for demo purposes
+        setTimeout(() => {
+            dashboard.classList.add('hidden');
+            installationPanel.classList.remove('hidden');
+        }, 1000);
+        
+        // Functions
+        function addSampleLogs() {
+            const sampleLogs = [
+                {timestamp: new Date(Date.now() - 10000), key: 'Shift', event: 'down', duration: 120},
+                {timestamp: new Date(Date.now() - 9500), key: 'H', event: 'down', duration: 50},
+                {timestamp: new Date(Date.now() - 9000), key: 'e', event: 'down', duration: 45},
+                {timestamp: new Date(Date.now() - 8500), key: 'l', event: 'down', duration: 30},
+                {timestamp: new Date(Date.now() - 8000), key: 'l', event: 'down', duration: 30},
+                {timestamp: new Date(Date.now() - 7500), key: 'o', event: 'down', duration: 40},
+                {timestamp: new Date(Date.now() - 7000), key: 'Enter', event: 'down', duration: 60},
+                {timestamp: new Date(Date.now() - 6000), key: 'P', event: 'down', duration: 55},
+                {timestamp: new Date(Date.now() - 5500), key: 'a', event: 'down', duration: 45},
+                {timestamp: new Date(Date.now() - 5000), key: 's', event: 'down', duration: 35},
+                {timestamp: new Date(Date.now() - 4500), key: 's', event: 'down', duration: 35},
+                {timestamp: new Date(Date.now() - 4000), key: 'w', event: 'down', duration: 40},
+                {timestamp: new Date(Date.now() - 3500), key: 'o', event: 'down', duration: 40},
+                {timestamp: new Date(Date.now() - 3000), key: 'r', event: 'down', duration: 35},
+                {timestamp: new Date(Date.now() - 2500), key: 'd', event: 'down', duration: 40},
+                {timestamp: new Date(Date.now() - 2000), key: '1', event: 'down', duration: 50},
+                {timestamp: new Date(Date.now() - 1500), key: '2', event: 'down', duration: 45},
+                {timestamp: new Date(Date.now() - 1000), key: '3', event: 'down', duration: 40},
+            ];
+            
+            logs = sampleLogs;
+            keyCount = sampleLogs.length;
+            updateLogTable();
+            updateKeyCount();
+        }
+        
+        function handleKeyDown(e) {
+            if (!isSimulating) return;
+            
+            // Don't log modifier keys alone
+            if (['Shift', 'Control', 'Alt', 'Meta', 'CapsLock'].includes(e.key)) return;
+            
+            const timestamp = new Date();
+            const logEntry = {
+                timestamp: timestamp,
+                key: e.key,
+                event: 'down',
+                duration: 0 // Will be updated on keyup
+            };
+            
+            logs.push(logEntry);
+            keyCount++;
+            
+            // Display the key in the visualization
+            displayKeystroke(e.key, 'down');
+            
+            updateLogTable();
+            updateKeyCount();
+            updateLastActivity();
+        }
+        
+        function handleKeyUp(e) {
+            if (!isSimulating) return;
+            
+            // Find the corresponding keydown event
+            for (let i = logs.length - 1; i >= 0; i--) {
+                if (logs[i].key === e.key && logs[i].event === 'down' && logs[i].duration === 0) {
+                    logs[i].duration = Math.floor(Math.random() * 100) + 30; // Random duration 30-130ms
+                    break;
+                }
+            }
+            
+            updateLogTable();
+        }
+        
+        function displayKeystroke(key, event) {
+            const keyElement = document.createElement('span');
+            
+            if (event === 'down') {
+                if (key === 'Enter') {
+                    keyElement.textContent = '⏎';
+                    keyElement.className = 'text-green-600 mx-1';
+                } else if (key === ' ') {
+                    keyElement.textContent = '␣';
+                    keyElement.className = 'text-gray-500 mx-1';
+                } else if (key === 'Backspace') {
+                    keyElement.textContent = '⌫';
+                    keyElement.className = 'text-red-500 mx-1';
+                } else if (key === 'Tab') {
+                    keyElement.textContent = '⇥';
+                    keyElement.className = 'text-purple-500 mx-1';
+                } else if (key.length > 1) {
+                    // Special key
+                    keyElement.textContent = `[${key}]`;
+                    keyElement.className = 'text-gray-500 mx-1';
+                } else {
+                    // Regular key
+                    keyElement.textContent = key;
+                    keyElement.className = 'text-blue-600 mx-1';
+                }
+                
+                keystrokeDisplay.appendChild(keyElement);
+                
+                // Scroll to bottom
+                keystrokeDisplay.scrollTop = keystrokeDisplay.scrollHeight;
+            }
+        }
+        
+        function updateLogTable() {
+            // Clear existing rows
+            logTableBody.innerHTML = '';
+            
+            // Add new rows (show only last 20 for performance)
+            const logsToShow = logs.slice(-20).reverse();
+            
+            logsToShow.forEach(log => {
+                const row = document.createElement('tr');
+                
+                const timestampCell = document.createElement('td');
+                timestampCell.className = 'px-6 py-4 whitespace-nowrap text-sm text-gray-500';
+                timestampCell.textContent = log.timestamp.toLocaleTimeString();
+                
+                const keyCell = document.createElement('td');
+                keyCell.className = 'px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900';
+                keyCell.textContent = log.key;
+                
+                const eventCell = document.createElement('td');
+                eventCell.className = 'px-6 py-4 whitespace-nowrap text-sm text-gray-500';
+                eventCell.textContent = log.event;
+                
+                const durationCell = document.createElement('td');
+                durationCell.className = 'px-6 py-4 whitespace-nowrap text-sm text-gray-500';
+                durationCell.textContent = log.duration > 0 ? log.duration : '';
+                
+                row.appendChild(timestampCell);
+                row.appendChild(keyCell);
+                row.appendChild(eventCell);
+                row.appendChild(durationCell);
+                
+                logTableBody.appendChild(row);
+            });
+        }
+        
+        function updateKeyCount() {
+            keyCountDisplay.textContent = keyCount;
+        }
+        
+        function updateRuntime() {
+            if (isSimulating) {
+                runtimeSeconds++;
+            }
+            
+            const hours = Math.floor(runtimeSeconds / 3600);
+            const minutes = Math.floor((runtimeSeconds % 3600) / 60);
+            const seconds = runtimeSeconds % 60;
+            
+            runtimeDisplay.textContent = 
+                `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        }
+        
+        function updateLastActivity() {
+            lastActivityDisplay.textContent = 'Just now';
+        }
+        
+        function toggleSimulation() {
+            isSimulating = !isSimulating;
+            
+            if (isSimulating) {
+                toggleSimBtn.innerHTML = '<i class="fas fa-power-off mr-2"></i> Pause Simulation';
+                toggleSimBtn.classList.remove('bg-gray-500');
+                toggleSimBtn.classList.add('bg-blue-600');
+                simStatusIndicator.className = 'status-indicator online';
+                simStatusText.textContent = 'Active';
+                
+                // Simulate coming back online
+                statusIndicator.className = 'status-indicator online';
+                statusText.textContent = 'Online';
+            } else {
+                toggleSimBtn.innerHTML = '<i class="fas fa-play mr-2"></i> Resume Simulation';
+                toggleSimBtn.classList.remove('bg-blue-600');
+                toggleSimBtn.classList.add('bg-gray-500');
+                simStatusIndicator.className = 'status-indicator offline';
+                simStatusText.textContent = 'Paused';
+                
+                // Simulate going offline
+                statusIndicator.className = 'status-indicator offline';
+                statusText.textContent = 'Offline';
+            }
+        }
+        
+        function clearLogs() {
+            logs = [];
+            keyCount = 0;
+            keystrokeDisplay.innerHTML = '<div class="text-gray-500">Press keys in the input below to simulate keylogging...</div>';
+            updateLogTable();
+            updateKeyCount();
+        }
+        
+        function simulateRandomKey() {
+            if (!isSimulating) return;
+            
+            const keys = [
+                'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm',
+                'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z',
+                '1', '2', '3', '4', '5', '6', '7', '8', '9', '0',
+                'Enter', 'Space', 'Backspace', 'Tab', 'Shift'
+            ];
+            
+            const randomKey = keys[Math.floor(Math.random() * keys.length)];
+            const timestamp = new Date();
+            
+            const logEntry = {
+                timestamp: timestamp,
+                key: randomKey,
+                event: 'down',
+                duration: Math.floor(Math.random() * 100) + 30
+            };
+            
+            logs.push(logEntry);
+            keyCount++;
+            
+            displayKeystroke(randomKey, 'down');
+            updateLogTable();
+            updateKeyCount();
+            updateLastActivity();
+        }
+        
+        function completeInstallation() {
+            const installBtnIcon = installBtn.querySelector('i');
+            installBtnIcon.classList.remove('hidden');
+            installBtn.disabled = true;
+            
+            setTimeout(() => {
+                installationPanel.classList.add('hidden');
+                dashboard.classList.remove('hidden');
+                installBtnIcon.classList.add('hidden');
+                installBtn.disabled = false;
+            }, 2000);
+        }
+        
+        function cancelInstallation() {
+            installationPanel.classList.add('hidden');
+            dashboard.classList.remove('hidden');
+        }
+    </script>
+</body>
+</html>
